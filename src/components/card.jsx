@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useCart } from "../context/CartContext"; // Import the custom hook
+import { useCart } from "../context/CartContext";
 
 const Card = ({ name, price, image }) => {
-  const { addToCart } = useCart(); // Destructure the function from context
+  const { addToCart } = useCart();
+  const [isAdded, setIsAdded] = useState(false); // Track if the item was just added
+
+  const handleAddToCart = () => {
+    addToCart({ name, price });
+    setIsAdded(true);
+    
+    // Change the button back to normal after 2 seconds
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 2000);
+  };
 
   return (
     <motion.div 
@@ -28,13 +39,18 @@ const Card = ({ name, price, image }) => {
         </div>
         
         <div className="flex flex-col gap-3 mt-2">
-          {/* Wire up the onClick event to the addToCart function */}
+          {/* Dynamic Button that changes color and text */}
           <button 
-            onClick={() => addToCart({ name, price })}
-            className="w-full bg-amber-800 text-white py-2.5 rounded-lg font-medium hover:bg-amber-900 transition-colors"
+            onClick={handleAddToCart}
+            className={`w-full py-2.5 rounded-lg font-medium transition-all duration-300 ${
+              isAdded 
+                ? 'bg-green-600 text-white hover:bg-green-700 scale-95' 
+                : 'bg-amber-800 text-white hover:bg-amber-900'
+            }`}
           >
-            Add to Cart
+            {isAdded ? '✓ Added to Cart' : 'Add to Cart'}
           </button>
+          
           <button className="w-full bg-amber-50 text-amber-900 py-2.5 rounded-lg font-medium hover:bg-amber-100 transition-colors">
             Buy Now
           </button>
